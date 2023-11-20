@@ -2,15 +2,19 @@ const taskInput = document.getElementById("task-input");
 const dateInput = document.getElementById("date-input");
 const addButton = document.getElementById("add-button");
 const alertMessage = document.getElementById("alert-message");
+const tasksBody = document.querySelector("tbody");
 
-const todos = JSON.parse(localStorage.getItem("ListOfTasks")) || [];
+const tasks = JSON.parse(localStorage.getItem("ListOfTasks")) || [];
+
+const saveToLocalStorage = () => {
+  localStorage.setItem("ListOfTasks", JSON.stringify(tasks));
+};
 
 const generateId = () => {
   return Math.round(
     Math.random() * Math.random() * Math.pow(10, 15)
   ).toString();
 };
-generateId();
 
 const showAlert = (message, type) => {
   alertMessage.innerHTML = "";
@@ -25,14 +29,33 @@ const showAlert = (message, type) => {
   }, 2000);
 };
 
-const saveToLocalStorage = () => {
-  localStorage.setItem("ListOfTasks", JSON.stringify(todos));
+const displayTasks = () => {
+  tasksBody.innerHTML = "";
+  if (!tasks.length) {
+    tasksBody.innerHTML = "<tr><td colspan='4'>No task!</td></tr>";
+    return;
+  }
+
+  tasks.forEach((task) => {
+    tasksBody.innerHTML += `
+        <tr>
+            <td>${task.task}</td>
+            <td>${task.date || "No date"}</td>
+            <td>${task.completed ? "Completed" : "Pending"}</td>
+            <td>
+                <button>Edit</button>
+                <button>Do</button>
+                <button>Delete</button>
+            </td>
+        </tr>
+    `;
+  });
 };
 
 const addHandler = () => {
   const task = taskInput.value;
   const date = dateInput.value;
-  const todo = {
+  const taskData = {
     id: generateId(),
     task,
     date,
@@ -40,8 +63,9 @@ const addHandler = () => {
   };
 
   if (task) {
-    todos.push(todo);
+    tasks.push(taskData);
     saveToLocalStorage();
+    displayTasks();
     taskInput.value = "";
     dateInput.value = "";
     showAlert("Task added successfully!", "success");
