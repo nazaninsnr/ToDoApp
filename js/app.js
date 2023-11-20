@@ -3,7 +3,7 @@ const dateInput = document.getElementById("date-input");
 const addButton = document.getElementById("add-button");
 const alertMessage = document.getElementById("alert-message");
 
-const todos = [];
+const todos = JSON.parse(localStorage.getItem("ListOfTasks")) || [];
 
 const generateId = () => {
   return Math.round(
@@ -25,6 +25,10 @@ const showAlert = (message, type) => {
   }, 2000);
 };
 
+const saveToLocalStorage = () => {
+  localStorage.setItem("ListOfTasks", JSON.stringify(todos));
+};
+
 const addHandler = () => {
   const task = taskInput.value;
   const date = dateInput.value;
@@ -37,6 +41,7 @@ const addHandler = () => {
 
   if (task) {
     todos.push(todo);
+    saveToLocalStorage();
     taskInput.value = "";
     dateInput.value = "";
     showAlert("Task added successfully!", "success");
