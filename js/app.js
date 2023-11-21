@@ -45,7 +45,9 @@ const displayTasks = () => {
             <td>${task.completed ? "Completed" : "Pending"}</td>
             <td>
                 <button>Edit</button>
-                <button>Do</button>
+                <button onClick="toggleHandler('${task.id}')">
+                    ${task.completed ? "Undo" : "Do"}
+                </button>
                 <button onClick="deleteHandler('${task.id}')">Delete</button>
             </td>
         </tr>
@@ -92,6 +94,14 @@ const deleteHandler = (id) => {
   saveToLocalStorage();
   displayTasks();
   showAlert("Task deleted successfully!", "success");
+};
+
+const toggleHandler = (id) => {
+  const newTasksList = tasks.find((task) => task.id === id);
+  newTasksList.completed = !newTasksList.completed;
+  saveToLocalStorage();
+  displayTasks();
+  showAlert("Task status chenged successfully!", "success");
 };
 
 window.addEventListener("load", displayTasks);
