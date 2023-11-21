@@ -3,8 +3,9 @@ const dateInput = document.getElementById("date-input");
 const addButton = document.getElementById("add-button");
 const alertMessage = document.getElementById("alert-message");
 const tasksBody = document.querySelector("tbody");
+const deleteAll = document.getElementById("delete-all-button");
 
-const tasks = JSON.parse(localStorage.getItem("ListOfTasks")) || [];
+let tasks = JSON.parse(localStorage.getItem("ListOfTasks")) || [];
 
 const saveToLocalStorage = () => {
   localStorage.setItem("ListOfTasks", JSON.stringify(tasks));
@@ -74,4 +75,17 @@ const addHandler = () => {
   }
 };
 
+const deleteAllHandler = () => {
+  if (tasks.length) {
+    tasks = [];
+    saveToLocalStorage();
+    displayTasks();
+    showAlert("All tasks deleted successfully!", "success");
+  } else {
+    showAlert("There is no task!", "error");
+  }
+};
+
+window.addEventListener("load", displayTasks);
 addButton.addEventListener("click", addHandler);
+deleteAll.addEventListener("click", deleteAllHandler);
