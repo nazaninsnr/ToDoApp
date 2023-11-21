@@ -46,7 +46,7 @@ const displayTasks = () => {
             <td>
                 <button>Edit</button>
                 <button>Do</button>
-                <button>Delete</button>
+                <button onClick="deleteHandler('${task.id}')">Delete</button>
             </td>
         </tr>
     `;
@@ -84,6 +84,14 @@ const deleteAllHandler = () => {
   } else {
     showAlert("There is no task!", "error");
   }
+};
+
+const deleteHandler = (id) => {
+  const newTasksList = tasks.filter((task) => task.id !== id);
+  tasks = newTasksList;
+  saveToLocalStorage();
+  displayTasks();
+  showAlert("Task deleted successfully!", "success");
 };
 
 window.addEventListener("load", displayTasks);
