@@ -1,6 +1,7 @@
 const taskInput = document.getElementById("task-input");
 const dateInput = document.getElementById("date-input");
 const addButton = document.getElementById("add-button");
+const editButton = document.getElementById("edit-button");
 const alertMessage = document.getElementById("alert-message");
 const tasksBody = document.querySelector("tbody");
 const deleteAll = document.getElementById("delete-all-button");
@@ -44,7 +45,7 @@ const displayTasks = () => {
             <td>${task.date || "No date"}</td>
             <td>${task.completed ? "Completed" : "Pending"}</td>
             <td>
-                <button>Edit</button>
+                <button onClick="editHandler('${task.id}')">Edit</button>
                 <button onClick="toggleHandler('${task.id}')">
                     ${task.completed ? "Undo" : "Do"}
                 </button>
@@ -104,6 +105,30 @@ const toggleHandler = (id) => {
   showAlert("Task status chenged successfully!", "success");
 };
 
+const editHandler = (id) => {
+  const newTasksList = tasks.find((task) => task.id === id);
+  taskInput.value = newTasksList.task;
+  dateInput.value = newTasksList.date;
+  addButton.style.display = "none";
+  editButton.style.display = "inline-block";
+  editButton.dataset.id = id;
+};
+
+const applyEditHandler = (event) => {
+  const id = event.target.dataset.id;
+  const newTasksList = tasks.find((task) => task.id === id);
+  newTasksList.task = taskInput.value;
+  newTasksList.date = dateInput.value;
+  taskInput.value = "";
+  dateInput.value = "";
+  addButton.style.display = "inline-block";
+  editButton.style.display = "none";
+  saveToLocalStorage();
+  displayTasks();
+  showAlert("Task edited successfully!", "success");
+};
+
 window.addEventListener("load", displayTasks);
 addButton.addEventListener("click", addHandler);
 deleteAll.addEventListener("click", deleteAllHandler);
+editButton.addEventListener("click", applyEditHandler);
