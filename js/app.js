@@ -5,6 +5,7 @@ const editButton = document.getElementById("edit-button");
 const alertMessage = document.getElementById("alert-message");
 const tasksBody = document.querySelector("tbody");
 const deleteAll = document.getElementById("delete-all-button");
+const filterButtons = document.querySelectorAll(".filter-todo");
 
 let tasks = JSON.parse(localStorage.getItem("ListOfTasks")) || [];
 
@@ -31,14 +32,15 @@ const showAlert = (message, type) => {
   }, 2000);
 };
 
-const displayTasks = () => {
+const displayTasks = (data) => {
+  const taskList = data || tasks;
   tasksBody.innerHTML = "";
-  if (!tasks.length) {
+  if (!taskList.length) {
     tasksBody.innerHTML = "<tr><td colspan='4'>No task!</td></tr>";
     return;
   }
 
-  tasks.forEach((task) => {
+  taskList.forEach((task) => {
     tasksBody.innerHTML += `
         <tr>
             <td>${task.task}</td>
@@ -128,7 +130,31 @@ const applyEditHandler = (event) => {
   showAlert("Task edited successfully!", "success");
 };
 
-window.addEventListener("load", displayTasks);
+const filterHandler = (event) => {
+  let filteredTasks = null;
+  const filter = event.target.dataset.filter;
+
+  switch (filter) {
+    case "pending":
+      filteredTasks = tasks.filter((task) => task.completed === false);
+      break;
+
+    case "completed":
+      filteredTasks = tasks.filter((task) => task.completed === true);
+      break;
+
+    default:
+      filteredTasks = tasks;
+      break;
+  }
+
+  displayTasks(filteredTasks);
+};
+
+window.addEventListener("load", () => displayTasks());
 addButton.addEventListener("click", addHandler);
 deleteAll.addEventListener("click", deleteAllHandler);
 editButton.addEventListener("click", applyEditHandler);
+filterButtons.forEach((button) => {
+  button.addEventListener("click", filterHandler);
+});
